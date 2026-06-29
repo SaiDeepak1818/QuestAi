@@ -1031,7 +1031,7 @@ JAVA RULES (CRITICAL):
 OTHER PER-QUESTION RULES:
 • Use a DIFFERENT real-world domain per question (rotate: hospital, bank, warehouse, game, social network, transport, school, farm, space, factory)
 • Scenario-based title only (NOT generic — "Routing Trucks with Dijkstra" not "Shortest Path")
-• Include exactly 3 test cases: first 2 isPublic=true, last 1 isPublic=false
+• Include exactly 15 test cases: first 3 isPublic=true (match sampleInput/sampleOutput + one variation), remaining 12 isPublic=false (edge cases, stress tests, boundary values, special cases)
 • ALL test case input/output: plain-text strings only (space-separated or newline-separated). NEVER JSON objects inside test cases. Trees → level-order array "5\\n1 3 2 null 4", graphs → adjacency list, linked lists → "1 2 3 4 5".
 
 CATEGORIES:
@@ -1060,6 +1060,18 @@ RESPONSE FORMAT — return ONLY valid JSON, no markdown fences, no preamble:
       "testCases": [
         { "input": "...", "output": "...", "isPublic": true },
         { "input": "...", "output": "...", "isPublic": true },
+        { "input": "...", "output": "...", "isPublic": true },
+        { "input": "...", "output": "...", "isPublic": false },
+        { "input": "...", "output": "...", "isPublic": false },
+        { "input": "...", "output": "...", "isPublic": false },
+        { "input": "...", "output": "...", "isPublic": false },
+        { "input": "...", "output": "...", "isPublic": false },
+        { "input": "...", "output": "...", "isPublic": false },
+        { "input": "...", "output": "...", "isPublic": false },
+        { "input": "...", "output": "...", "isPublic": false },
+        { "input": "...", "output": "...", "isPublic": false },
+        { "input": "...", "output": "...", "isPublic": false },
+        { "input": "...", "output": "...", "isPublic": false },
         { "input": "...", "output": "...", "isPublic": false }
       ],
       "solutions": {
@@ -1085,6 +1097,18 @@ RESPONSE FORMAT — return ONLY valid JSON, no markdown fences, no preamble:
       "testCases": [
         { "input": "...", "output": "...", "isPublic": true },
         { "input": "...", "output": "...", "isPublic": true },
+        { "input": "...", "output": "...", "isPublic": true },
+        { "input": "...", "output": "...", "isPublic": false },
+        { "input": "...", "output": "...", "isPublic": false },
+        { "input": "...", "output": "...", "isPublic": false },
+        { "input": "...", "output": "...", "isPublic": false },
+        { "input": "...", "output": "...", "isPublic": false },
+        { "input": "...", "output": "...", "isPublic": false },
+        { "input": "...", "output": "...", "isPublic": false },
+        { "input": "...", "output": "...", "isPublic": false },
+        { "input": "...", "output": "...", "isPublic": false },
+        { "input": "...", "output": "...", "isPublic": false },
+        { "input": "...", "output": "...", "isPublic": false },
         { "input": "...", "output": "...", "isPublic": false }
       ],
       "solutions": {
@@ -1110,6 +1134,18 @@ RESPONSE FORMAT — return ONLY valid JSON, no markdown fences, no preamble:
       "testCases": [
         { "input": "...", "output": "...", "isPublic": true },
         { "input": "...", "output": "...", "isPublic": true },
+        { "input": "...", "output": "...", "isPublic": true },
+        { "input": "...", "output": "...", "isPublic": false },
+        { "input": "...", "output": "...", "isPublic": false },
+        { "input": "...", "output": "...", "isPublic": false },
+        { "input": "...", "output": "...", "isPublic": false },
+        { "input": "...", "output": "...", "isPublic": false },
+        { "input": "...", "output": "...", "isPublic": false },
+        { "input": "...", "output": "...", "isPublic": false },
+        { "input": "...", "output": "...", "isPublic": false },
+        { "input": "...", "output": "...", "isPublic": false },
+        { "input": "...", "output": "...", "isPublic": false },
+        { "input": "...", "output": "...", "isPublic": false },
         { "input": "...", "output": "...", "isPublic": false }
       ],
       "solutions": {

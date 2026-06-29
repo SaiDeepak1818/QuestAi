@@ -104,9 +104,19 @@ Context: ${context}
       "testCases": [
         {"input": "sample input 1", "output": "expected output 1", "isPublic": true},
         {"input": "sample input 2", "output": "expected output 2", "isPublic": true},
-        {"input": "edge case input", "output": "edge case output", "isPublic": false},
-        {"input": "stress test input", "output": "stress test output", "isPublic": false},
-        {"input": "boundary input", "output": "boundary output", "isPublic": false}
+        {"input": "sample input variation", "output": "expected output variation", "isPublic": true},
+        {"input": "edge case 1", "output": "edge output 1", "isPublic": false},
+        {"input": "edge case 2", "output": "edge output 2", "isPublic": false},
+        {"input": "edge case 3", "output": "edge output 3", "isPublic": false},
+        {"input": "stress test 1", "output": "stress output 1", "isPublic": false},
+        {"input": "stress test 2", "output": "stress output 2", "isPublic": false},
+        {"input": "stress test 3", "output": "stress output 3", "isPublic": false},
+        {"input": "boundary min", "output": "boundary min output", "isPublic": false},
+        {"input": "boundary max", "output": "boundary max output", "isPublic": false},
+        {"input": "large input 1", "output": "large output 1", "isPublic": false},
+        {"input": "large input 2", "output": "large output 2", "isPublic": false},
+        {"input": "special case 1", "output": "special output 1", "isPublic": false},
+        {"input": "special case 2", "output": "special output 2", "isPublic": false}
       ],
       "solutions": {
         "java": "// COMPLETE Java program with main()",
@@ -122,7 +132,7 @@ Context: ${context}
 Rules:
 - ALL solutions must be complete, compilable programs — no stubs or placeholder comments
 - Each question MUST use a different real-world domain
-- testCases must have exactly 5 entries: 2 public (isPublic: true) matching sampleInput/sampleOutput, then 3 private hidden cases
+- testCases MUST have exactly 15 entries: first 3 public (isPublic: true, match sampleInput/sampleOutput + one variation), then 12 private (isPublic: false) covering edge cases, stress tests, boundary values, special cases
 - Return the JSON immediately, no preamble
 
 After generating the JSON, call **questai.save_questions** with jobId="${jobId}", type="${type}", track="${track}", course="${course}", client="${client}", difficulty="${difficulty}", and the questions JSON string to save to QuestAI.`
