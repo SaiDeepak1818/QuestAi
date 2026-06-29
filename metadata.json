@@ -1,0 +1,6 @@
+{
+  "name": "QuestAi",
+  "description": "The ultimate high-performance platform for AI-powered technical assessments. Generate polished DSA challenges, expert MCQs, and detailed quality reports with a stunning mission-control interface.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["AI-driven question generation", "QC Report generation", "Vibrant UI", "Multi-language support", "Test Case Validation"]
+}

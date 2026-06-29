@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "questai": {
+      "command": "node",
+      "args": ["C:\\Users\\DYSaiDeepak\\Desktop\\Questprep1\\Questprep1\\mcp-server.js"]
+    }
+  }
+}

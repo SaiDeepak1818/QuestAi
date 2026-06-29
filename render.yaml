@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: questai-app
+    runtime: node
+    buildCommand: npm install && npm run build
+    startCommand: node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        sync: false
+      - key: GROQ_API_KEY
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: MCP_SECRET
+        value: questai-mcp-2025
+
+  - type: web
+    name: questai-mcp
+    runtime: node
+    buildCommand: npm install
+    startCommand: node mcp-server.js
+    envVars:
+      - key: QUESTAI_URL
+        sync: false
+      - key: MCP_SECRET
+        value: questai-mcp-2025
+      - key: MCP_AUTH_TOKEN
+        sync: false
