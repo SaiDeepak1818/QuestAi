@@ -12,6 +12,7 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import { z } from 'zod';
 import http from 'http';
+import crypto from 'crypto';
 
 const QUESTAI_URL = process.env.QUESTAI_URL || 'http://localhost:3000';
 const MCP_SECRET  = process.env.MCP_SECRET  || 'questai-mcp-2025';
@@ -367,35 +368,125 @@ server.tool('list_clients', 'List all QuestAI TVA clients.', {}, async () => ({
   content: [{ type: 'text', text: '# QuestAI Clients\n\n' + TVA_CLIENTS.map((c,i) => `${i+1}. ${c}`).join('\n') }]
 }));
 
+// ── OAuth 2.0 in-memory stores ────────────────────────────────────────────────
+const oauthClients = new Map();   // clientId → { redirectUris }
+const oauthCodes   = new Map();   // code     → { clientId, redirectUri, codeChallenge, expiresAt }
+const oauthTokens  = new Map();   // token    → { clientId, createdAt }
+
+const MCP_SERVER_URL = process.env.MCP_SERVER_URL || 'https://questai-mcp.onrender.com';
+
+const readBody = (req) => new Promise((resolve, reject) => {
+  let data = '';
+  req.on('data', chunk => { data += chunk; });
+  req.on('end', () => resolve(data));
+  req.on('error', reject);
+});
+
 // ── Connect — stdio (Code tab) or HTTP (Claude.ai web) ───────────────────────
-// Railway injects PORT automatically; MCP_HTTP_PORT overrides locally
 const HTTP_PORT = parseInt(process.env.MCP_HTTP_PORT || process.env.PORT || '0');
 
 if (HTTP_PORT) {
-  // ── Remote HTTP mode — used by Claude.ai web chat ─────────────────────────
   const httpServer = http.createServer(async (req, res) => {
-    // Health check — Railway uses this to confirm the service is up
-    if (req.method === 'GET' && req.url === '/health') {
-      res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ ok: true, service: 'questai-mcp', version: '3.0.0' }));
-      return;
-    }
+    const url = new URL(req.url, MCP_SERVER_URL);
 
-    // CORS for Claude.ai
+    // CORS
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, mcp-session-id');
     if (req.method === 'OPTIONS') { res.writeHead(204); res.end(); return; }
 
-    // Optional bearer token auth
-    const token = process.env.MCP_AUTH_TOKEN;
-    if (token) {
-      const auth = req.headers['authorization'] || '';
-      if (!auth.startsWith('Bearer ') || auth.slice(7) !== token) {
-        res.writeHead(401, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ error: 'Unauthorized' }));
-        return;
+    // Health check
+    if (req.method === 'GET' && url.pathname === '/health') {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ ok: true, service: 'questai-mcp', version: '3.0.0' }));
+      return;
+    }
+
+    // ── OAuth 2.0 metadata discovery ─────────────────────────────────────────
+    if (req.method === 'GET' && url.pathname === '/.well-known/oauth-authorization-server') {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({
+        issuer: MCP_SERVER_URL,
+        authorization_endpoint: `${MCP_SERVER_URL}/oauth/authorize`,
+        token_endpoint: `${MCP_SERVER_URL}/oauth/token`,
+        registration_endpoint: `${MCP_SERVER_URL}/oauth/register`,
+        response_types_supported: ['code'],
+        grant_types_supported: ['authorization_code'],
+        code_challenge_methods_supported: ['S256'],
+        token_endpoint_auth_methods_supported: ['none']
+      }));
+      return;
+    }
+
+    // ── Dynamic Client Registration ───────────────────────────────────────────
+    if (req.method === 'POST' && url.pathname === '/oauth/register') {
+      try {
+        const body = JSON.parse(await readBody(req));
+        const clientId = `qai_${crypto.randomUUID().replace(/-/g, '')}`;
+        oauthClients.set(clientId, { redirectUris: body.redirect_uris || [] });
+        res.writeHead(201, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({
+          client_id: clientId,
+          client_name: body.client_name || 'Claude',
+          redirect_uris: body.redirect_uris || [],
+          token_endpoint_auth_method: 'none',
+          grant_types: ['authorization_code'],
+          response_types: ['code']
+        }));
+      } catch {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'invalid_request' }));
       }
+      return;
+    }
+
+    // ── Authorization endpoint — auto-approve ─────────────────────────────────
+    if (req.method === 'GET' && url.pathname === '/oauth/authorize') {
+      const clientId     = url.searchParams.get('client_id');
+      const redirectUri  = url.searchParams.get('redirect_uri');
+      const state        = url.searchParams.get('state');
+      const codeChallenge = url.searchParams.get('code_challenge');
+      const code = crypto.randomUUID();
+      oauthCodes.set(code, { clientId, redirectUri, codeChallenge, expiresAt: Date.now() + 300_000 });
+      const redirect = new URL(redirectUri);
+      redirect.searchParams.set('code', code);
+      if (state) redirect.searchParams.set('state', state);
+      res.writeHead(302, { Location: redirect.toString() });
+      res.end();
+      return;
+    }
+
+    // ── Token endpoint ────────────────────────────────────────────────────────
+    if (req.method === 'POST' && url.pathname === '/oauth/token') {
+      try {
+        const raw = await readBody(req);
+        const params = raw.startsWith('{') ? JSON.parse(raw) : Object.fromEntries(new URLSearchParams(raw));
+        const code = params.code;
+        const entry = oauthCodes.get(code);
+        if (!entry || Date.now() > entry.expiresAt) {
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: 'invalid_grant' }));
+          return;
+        }
+        oauthCodes.delete(code);
+        const token = crypto.randomUUID();
+        oauthTokens.set(token, { clientId: entry.clientId, createdAt: Date.now() });
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ access_token: token, token_type: 'Bearer', expires_in: 86400 }));
+      } catch {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'invalid_request' }));
+      }
+      return;
+    }
+
+    // ── MCP requests — verify OAuth token ────────────────────────────────────
+    const authHeader = req.headers['authorization'] || '';
+    const bearerToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : null;
+    if (!bearerToken || !oauthTokens.has(bearerToken)) {
+      res.writeHead(401, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'Unauthorized' }));
+      return;
     }
 
     const transport = new StreamableHTTPServerTransport({ sessionIdHeader: 'mcp-session-id' });
@@ -405,7 +496,7 @@ if (HTTP_PORT) {
 
   httpServer.listen(HTTP_PORT, () => {
     console.error(`[QuestAI MCP] HTTP server running on port ${HTTP_PORT}`);
-    console.error(`[QuestAI MCP] Register this URL in Claude.ai → Settings → Integrations`);
+    console.error(`[QuestAI MCP] OAuth ready — register at ${MCP_SERVER_URL}`);
   });
 } else {
   // ── Local stdio mode — used by Claude Code tab ────────────────────────────
