@@ -688,6 +688,11 @@ export function PlannerPage({ apiFetch, showToast, getActiveFormat, tracksWithCo
             Excel-driven weekly question sets · All tracks
           </p>
         </div>
+        <button onClick={() => setMode('create')}
+          className="flex items-center gap-2 bg-brand-primary hover:bg-brand-primary/90 text-white px-5 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-wider transition-all shadow-lg shadow-brand-primary/20 cursor-pointer"
+        >
+          <Plus size={14} /> New Planner
+        </button>
       </div>
 
       {isLoading ? (

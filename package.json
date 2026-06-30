@@ -38,9 +38,7 @@
     "react-dom": "^19.0.1",
     "react-markdown": "^10.1.0",
     "tailwind-merge": "^3.5.0",
-    "three": "^0.185.0",
     "tsx": "^4.21.0",
-    "vanta": "^0.5.24",
     "vite": "^6.2.3",
     "xlsx": "^0.18.5",
     "zod": "^4.4.3"
