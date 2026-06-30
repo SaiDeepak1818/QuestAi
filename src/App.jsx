@@ -74,7 +74,6 @@ import { QLoader } from './components/QLoader';
 import { PlannerPage } from './components/PlannerPage';
 import { PlannerView } from './components/PlannerView';
 import { ContentWeb } from './components/ContentWeb';
-import { CursorTrail } from './components/CursorTrail';
 
 
 
@@ -1553,7 +1552,7 @@ TECHNICAL NOTES:
 
   return (
     <div className="w-screen h-screen overflow-hidden text-foreground bg-background flex flex-col font-sans select-none relative">
-      <CursorTrail />
+      <div className="friday-watermark">F.R.I.D.A.Y</div>
       
       {/* Dynamic Toast Alerts Renderer */}
       <div className="fixed top-5 left-1/2 -translate-x-1/2 z-[999] flex flex-col gap-2.5 pointer-events-none">
@@ -1575,7 +1574,7 @@ TECHNICAL NOTES:
         
         {/* Page 1: Auth Screen (Full Custom Render inside SPA) */}
         {displayedPage === 'login' && (
-          <div className="flex-1 bg-[#f2f2f7] dark:bg-[#060813] dark:bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:18px_18px] flex flex-col overflow-y-auto">
+          <div className="flex-1 bg-[#f2f2f7] dark:bg-[#0d0b1e] flex flex-col overflow-y-auto">
             {/* Login Header brand */}
             <div className="h-14 glass-topbar px-6 flex items-center justify-between shrink-0">
               <div className="flex items-center gap-3">

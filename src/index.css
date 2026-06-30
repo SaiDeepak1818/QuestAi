@@ -60,11 +60,11 @@
     --muted-foreground:  #6c6c70;
   }
   .dark {
-    --background:        #0a0a0c;
-    --foreground:        #f5f5f5;
-    --card:              rgba(235,102,88,0.08);
-    --card-foreground:   #f5f5f5;
-    --border:            rgba(235,102,88,0.18);
+    --background:        #0d0b1e;
+    --foreground:        #f0eeff;
+    --card:              rgba(36,28,78,0.64);
+    --card-foreground:   #f0eeff;
+    --border:            rgba(36,28,78,0.78);
     --muted:             rgba(255,255,255,0.05);
     --muted-foreground:  #a1a1aa;
   }
@@ -72,7 +72,9 @@
 
 /* ═══════════════════════════════════════════
    GLASS MORPHISM SYSTEM
-   Based on css.glass coral: rgba(235,102,88,…)
+   Light mode: white glass (Apple style)
+   Dark mode:  deep indigo glass — css.glass spec
+               rgba(36,28,78,…) + blur(10px)
    ═══════════════════════════════════════════ */
 @layer utilities {
 
@@ -86,16 +88,18 @@
     transition: box-shadow 0.2s, border-color 0.2s;
   }
   .dark .glass-card {
-    background: rgba(235,102,88,0.08);
-    border: 1px solid rgba(235,102,88,0.20);
-    box-shadow: 0 4px 32px rgba(0,0,0,0.40), 0 1px 0 rgba(255,255,255,0.04) inset;
+    background: rgba(36,28,78,0.64);
+    border: 1px solid rgba(36,28,78,0.78);
+    box-shadow: 0 4px 30px rgba(0,0,0,0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
   }
   .glass-card:hover {
     box-shadow: 0 8px 32px rgba(0,0,0,0.09), 0 1px 0 rgba(255,255,255,0.9) inset;
   }
   .dark .glass-card:hover {
-    border-color: rgba(235,102,88,0.35);
-    box-shadow: 0 8px 40px rgba(0,0,0,0.50), 0 0 0 1px rgba(235,102,88,0.14), 0 1px 0 rgba(255,255,255,0.04) inset;
+    border-color: rgba(100,80,180,0.60);
+    box-shadow: 0 8px 40px rgba(0,0,0,0.40), 0 0 0 1px rgba(100,80,180,0.25), 0 1px 0 rgba(255,255,255,0.04) inset;
   }
 
   /* ── Glass Panel (filter bars, small pill groups) ── */
@@ -107,8 +111,10 @@
     transition: border-color 0.2s;
   }
   .dark .glass-panel {
-    background: rgba(235,102,88,0.06);
-    border: 1px solid rgba(235,102,88,0.14);
+    background: rgba(36,28,78,0.50);
+    border: 1px solid rgba(36,28,78,0.70);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
   }
 
   /* ── Glass Input / Textarea / Select ── */
@@ -122,11 +128,11 @@
   .glass-input:focus  { border-color: rgba(37,99,235,0.50) !important; outline: none; }
 
   .dark .glass-input {
-    background: rgba(235,102,88,0.06) !important;
-    border: 1px solid rgba(235,102,88,0.18) !important;
-    color: #f5f5f5 !important;
+    background: rgba(36,28,78,0.55) !important;
+    border: 1px solid rgba(36,28,78,0.78) !important;
+    color: #f0eeff !important;
   }
-  .dark .glass-input::placeholder { color: #6b7280 !important; }
+  .dark .glass-input::placeholder { color: #6b5fa0 !important; }
 
   /* ── Glass Sidebar ── */
   .glass-sidebar {
@@ -136,8 +142,8 @@
     border-right: 1px solid rgba(0,0,0,0.055);
   }
   .dark .glass-sidebar {
-    background: rgba(9,13,24,0.88);
-    border-right: 1px solid rgba(255,255,255,0.055);
+    background: rgba(12,10,28,0.94);
+    border-right: 1px solid rgba(36,28,78,0.78);
   }
 
   /* ── Glass Topbar ── */
@@ -148,8 +154,8 @@
     border-bottom: 1px solid rgba(0,0,0,0.055);
   }
   .dark .glass-topbar {
-    background: rgba(9,13,24,0.88);
-    border-bottom: 1px solid rgba(255,255,255,0.055);
+    background: rgba(12,10,28,0.94);
+    border-bottom: 1px solid rgba(36,28,78,0.78);
   }
 
   /* ── Coral Glass Button — exact css.glass spec ── */
@@ -176,21 +182,35 @@
 /* ═══════════════════════════════════════════
    LIGHT MODE — TEXT READABILITY IN GLASS
    Override dark-mode text colors scoped to
-   glass containers (p/span/div only — not
-   buttons which handle their own text color)
+   glass containers. Covers all text-bearing
+   elements except <button> which handle their
+   own text color.
    ═══════════════════════════════════════════ */
 :root:not(.dark) .glass-card p.text-white,
 :root:not(.dark) .glass-card span.text-white,
 :root:not(.dark) .glass-card div.text-white,
+:root:not(.dark) .glass-card h1.text-white,
+:root:not(.dark) .glass-card h2.text-white,
+:root:not(.dark) .glass-card h3.text-white,
+:root:not(.dark) .glass-card h4.text-white,
+:root:not(.dark) .glass-card h5.text-white,
+:root:not(.dark) .glass-card h6.text-white,
+:root:not(.dark) .glass-card label.text-white,
 :root:not(.dark) .glass-panel p.text-white,
 :root:not(.dark) .glass-panel span.text-white,
 :root:not(.dark) .glass-panel div.text-white,
+:root:not(.dark) .glass-panel h1.text-white,
+:root:not(.dark) .glass-panel h2.text-white,
+:root:not(.dark) .glass-panel h3.text-white,
+:root:not(.dark) .glass-panel label.text-white,
 :root:not(.dark) .glass-sidebar p.text-white,
 :root:not(.dark) .glass-sidebar span.text-white,
 :root:not(.dark) .glass-sidebar div.text-white,
 :root:not(.dark) .glass-topbar  p.text-white,
 :root:not(.dark) .glass-topbar  span.text-white,
-:root:not(.dark) .glass-topbar  div.text-white { color: #1c1c1e; }
+:root:not(.dark) .glass-topbar  div.text-white,
+:root:not(.dark) .glass-topbar  h1.text-white,
+:root:not(.dark) .glass-topbar  h2.text-white { color: #1c1c1e; }
 
 :root:not(.dark) .glass-card .text-slate-200,
 :root:not(.dark) .glass-card .text-slate-300,
@@ -215,6 +235,32 @@
 :root:not(.dark) .glass-card .btn-coral-glass { color: white; }
 
 /* ═══════════════════════════════════════════
+   F.R.I.D.A.Y WATERMARK
+   Diagonal text, bottom-left → top-right
+   ═══════════════════════════════════════════ */
+.friday-watermark {
+  position: fixed;
+  bottom: -4%;
+  left: 0;
+  font-family: var(--font-display);
+  font-size: clamp(8rem, 21vw, 26rem);
+  font-weight: 900;
+  font-style: italic;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  transform: rotate(-32deg);
+  transform-origin: bottom left;
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+  white-space: nowrap;
+  color: rgba(28,28,30,0.045);
+}
+.dark .friday-watermark {
+  color: rgba(200,190,255,0.045);
+}
+
+/* ═══════════════════════════════════════════
    GLOBAL
    ═══════════════════════════════════════════ */
 body {
@@ -228,10 +274,10 @@ h1, h2, h3, h4, h5, h6 { @apply font-display; }
 .custom-scrollbar::-webkit-scrollbar       { width: 3px; }
 .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(235,102,88,0.28);
+  background: rgba(36,28,78,0.35);
   border-radius: 99px;
 }
-.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(235,102,88,0.55); }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(36,28,78,0.60); }
 
 /* ═══════════════════════════════════════════
    LOADER
