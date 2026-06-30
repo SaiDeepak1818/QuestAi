@@ -16,7 +16,7 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 const JWT_SECRET    = process.env.JWT_SECRET    || 'dev-secret-key-change-in-production';
-const TVA_AUTH_URL  = process.env.TVA_AUTH_URL;  // e.g. https://timesheet.iamneo.ai
+const TVA_AUTH_URL  = (process.env.TVA_AUTH_URL || 'https://backend-timesheet.neoqlabs.com').replace(/\/+$/, '');
 const BCRYPT_ROUNDS = 10;
 
 // MongoDB Connection Setup
