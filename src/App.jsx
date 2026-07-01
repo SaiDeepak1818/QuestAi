@@ -3772,7 +3772,7 @@ TECHNICAL NOTES:
                 <pre className="text-[11px] text-slate-300 font-mono p-4 overflow-x-auto whitespace-pre-wrap leading-relaxed max-h-80 overflow-y-auto">{mcpPromptText}</pre>
               </div>
               <p className="text-[9px] text-slate-600 font-mono mt-2">
-                Tip: paste this into Claude Code tab → Claude calls questai tools → questions appear in your course card.
+                Tip: paste this into Claude Code tab → Claude calls F.R.I.D.A.Y tools → questions appear in your course card.
               </p>
             </div>
 
